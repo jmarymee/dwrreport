@@ -10,6 +10,66 @@ namespace DWRCalReport
     {
         static void Main(string[] args)
         {
+            Program p = new Program();
+            p.GetAllCalendarItems();
+            Console.WriteLine("done");
+            Console.ReadLine();
+        }
+
+        public void GetAllCalendarItems()
+        {
+            Microsoft.Office.Interop.Outlook.Application oApp = null;
+            Microsoft.Office.Interop.Outlook.NameSpace mapiNamespace = null;
+            Microsoft.Office.Interop.Outlook.MAPIFolder CalendarFolder = null;
+            Microsoft.Office.Interop.Outlook.Items outlookCalendarItems = null;
+
+            oApp = new Microsoft.Office.Interop.Outlook.Application();
+            mapiNamespace = oApp.GetNamespace("MAPI"); ;
+            CalendarFolder = mapiNamespace.GetDefaultFolder(Microsoft.Office.Interop.Outlook.OlDefaultFolders.olFolderCalendar); outlookCalendarItems = CalendarFolder.Items;
+            outlookCalendarItems.IncludeRecurrences = true;
+
+            foreach (Microsoft.Office.Interop.Outlook.AppointmentItem item in outlookCalendarItems)
+            {
+                if (item.IsRecurring)
+                {
+                    Microsoft.Office.Interop.Outlook.RecurrencePattern rp = item.GetRecurrencePattern();
+                    DateTime first = new DateTime(2017, 9, 17, item.Start.Hour, item.Start.Minute, 0);
+                    DateTime last = new DateTime(2017, 9, 17);
+                    Microsoft.Office.Interop.Outlook.AppointmentItem recur = null;
+
+
+
+                    for (DateTime cur = first; cur <= last; cur = cur.AddDays(1))
+                    {
+                        try
+                        {
+                            recur = rp.GetOccurrence(cur);
+                            //MessageBox.Show(recur.Subject + " -> " + cur.ToLongDateString());
+                            //Console.WriteLine(recur.Subject + " -> " + cur.ToLongDateString());
+                        }
+                        catch
+                        { }
+                    }
+                }
+                else
+                {
+                    if (item.Start >= DateTime.Now)
+                    {
+                        //MessageBox.Show(item.Subject + " -> " + item.Start.ToLongDateString());
+                        //Console.WriteLine(item.Subject + " -> " + item.Start.ToLongDateString());
+                        if (item.Categories.Contains("DWR"))
+                        {
+                            Console.WriteLine(String.Format("{0}", item.Categories));
+                            Console.WriteLine(String.Format("{0}", item.Subject));
+                            Console.WriteLine(String.Format("{0}", item.Start));
+                            Console.WriteLine(String.Format("{0}", item.End));
+                            Console.WriteLine(String.Format("{0}", item.Duration));
+                            Console.WriteLine(String.Format("{0}", item.AllDayEvent));
+                        }
+                    }
+                }
+            }
+
         }
     }
 }
