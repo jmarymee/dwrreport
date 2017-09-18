@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.26730.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DWRCalReport", "DWRCalReport\DWRCalReport.csproj", "{AACD7CB3-53C5-453E-A926-29BFDF042F45}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "O365CalClass", "O365CalClass\O365CalClass.csproj", "{573B00C8-3EB8-444B-92A2-0B9F697345A8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DWRReport", "DWRReport\DWRReport.csproj", "{6B76FF51-0A72-4361-B1A5-AB9FC417B8B4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{AACD7CB3-53C5-453E-A926-29BFDF042F45}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AACD7CB3-53C5-453E-A926-29BFDF042F45}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AACD7CB3-53C5-453E-A926-29BFDF042F45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{573B00C8-3EB8-444B-92A2-0B9F697345A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{573B00C8-3EB8-444B-92A2-0B9F697345A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{573B00C8-3EB8-444B-92A2-0B9F697345A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{573B00C8-3EB8-444B-92A2-0B9F697345A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B76FF51-0A72-4361-B1A5-AB9FC417B8B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B76FF51-0A72-4361-B1A5-AB9FC417B8B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B76FF51-0A72-4361-B1A5-AB9FC417B8B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B76FF51-0A72-4361-B1A5-AB9FC417B8B4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
