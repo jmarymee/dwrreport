@@ -121,7 +121,7 @@ namespace DWRCalReport
                     {
                         //MessageBox.Show(item.Subject + " -> " + item.Start.ToLongDateString());
                         //Console.WriteLine(item.Subject + " -> " + item.Start.ToLongDateString());
-                        if (item.Categories.Contains("DWR:"))
+                        if (item.Categories != null && item.Categories.Trim().Contains("DWR:"))
                         {
                             dwrItems.Add(new DWRItemClass() { Categories = item.Categories, duration = item.Duration, endDate = item.End, isAllDay = item.AllDayEvent, startDate = item.Start, Subject = item.Subject });
                         }
