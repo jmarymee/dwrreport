@@ -3,14 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
+using System.Configuration;
 
 namespace DWRCalReport
 {
     class Program
     {
+        private string filePath;// = @"c:\tools\dwrlist.csv";
         static void Main(string[] args)
         {
             Program p = new Program();
+            if (args.Length > 0)
+            {
+                p.filePath = args[0];
+            }
+            else
+            {
+                p.filePath = Properties.Settings.Default.filePath;
+            }
             p.GetAllCalendarItems();
             Console.WriteLine("done");
             Console.ReadLine();
@@ -24,6 +35,48 @@ namespace DWRCalReport
             Console.WriteLine(String.Format("{0}", item.endDate));
             Console.WriteLine(String.Format("{0}", item.duration));
             Console.WriteLine(String.Format("{0}", item.isAllDay));
+        }
+
+        public void WriteAllItems(List<DWRItemClass> items)
+        {
+            //items.Sort(delegate (DWRItemClass o1, DWRItemClass o2) { return o1.startDate.CompareTo(o2.startDate); });
+            foreach (DWRItemClass item in items)
+            {
+                WriteDWRItem(item);
+            }
+        }
+
+        public void WriteToCSV(List<DWRItemClass> items, string filePath)
+        {
+            List<string> catList = new List<string>();
+
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+
+            using (var file = File.CreateText(filePath))
+            {
+                file.WriteLine("StartDate,Subject,Categories,EndDate,Duration,AllDay");
+                foreach (var item in items)
+                {
+                    var cList = item.Categories.Split(',');
+                    catList = new List<string>(cList);
+                    catList.RemoveAll(delegate (string s1) 
+                    {
+                        return !s1.Trim().StartsWith("DWR:");
+                    });
+                    //catList.Sort(delegate (string o1, string o2)
+                    //    {
+                    //        if (o1.StartsWith("DWR:") && o2.StartsWith("DWR:")) return 0;
+                    //        if (o1.StartsWith("DWR:") && !o2.StartsWith("DWR:")) return 0;
+                    //        else return 1;
+                    //    });
+                    var cats = String.Join(",", catList.ToArray());
+                    file.WriteLine(string.Format("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\"", item.startDate, item.Subject, cats, item.endDate, item.duration, item.isAllDay));
+                }
+                file.WriteLine();
+            }
         }
 
         public void GetAllCalendarItems()
@@ -76,6 +129,9 @@ namespace DWRCalReport
                 }
             }
 
+            dwrItems.Sort(delegate (DWRItemClass o1, DWRItemClass o2) { return o1.startDate.CompareTo(o2.startDate); });
+            WriteAllItems(dwrItems);
+            WriteToCSV(dwrItems, filePath);
         }
     }
 
