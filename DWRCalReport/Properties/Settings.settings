@@ -5,5 +5,8 @@
     <Setting Name="filePath" Type="System.String" Scope="User">
       <Value Profile="(Default)">c:\tools\dwr.csv</Value>
     </Setting>
+    <Setting Name="startDate" Type="System.String" Scope="User">
+      <Value Profile="(Default)">09/01/2017</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

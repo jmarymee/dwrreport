@@ -60,6 +60,8 @@ namespace DWRCalReport
                 file.WriteLine("StartDate,Subject,Categories,EndDate,Duration,AllDay");
                 foreach (var item in items)
                 {
+                    //tst
+                    ParseDetails(item);
                     var cList = item.Categories.Split(',');
                     catList = new List<string>(cList);
                     catList.RemoveAll(delegate (string s1) 
@@ -79,9 +81,54 @@ namespace DWRCalReport
             }
         }
 
+        private DWRDetails ParseDetails(DWRItemClass item)
+        {
+            DWRDetails details = new DWRDetails();
+
+            var clist = item.Categories.Split(',').ToList<string>();
+
+            List<string> catList = clist.FindAll(delegate (string s1) 
+            {
+                return s1.Trim().StartsWith("DWR:");
+            });
+
+            List<string> projectInfo = clist.FindAll(delegate (string s1)
+            {
+                return s1.Trim().StartsWith("Project:");
+            });
+
+            if (projectInfo !=null && projectInfo.Count ==1 )
+            {
+                var pandc = projectInfo[0].Trim().Split('-');
+                if (pandc.Length == 2)
+                {
+                    details.DWRProcess = String.Join(",", catList.ToArray());
+                    details.Company = pandc[1];
+                    details.project = pandc[0];
+                }
+            }
+
+            return details;
+        }
+
         public void GetAllCalendarItems()
         {
             List<DWRItemClass> dwrItems = new List<DWRItemClass>();
+            DateTime startDate;
+
+            try
+            {
+                string startDateText = Properties.Settings.Default.startDate;
+                string[] di = startDateText.Split('/');
+                int year = Convert.ToInt32(di[2]);
+                int month = Convert.ToInt32(di[1]);
+                int day = Convert.ToInt32(di[0]);
+                startDate = new DateTime(year, month, day);
+            }
+            catch
+            {
+                startDate = DateTime.Now;
+            }
 
             Microsoft.Office.Interop.Outlook.Application oApp = null;
             Microsoft.Office.Interop.Outlook.NameSpace mapiNamespace = null;
@@ -117,7 +164,7 @@ namespace DWRCalReport
                 }
                 else
                 {
-                    if (item.Start >= DateTime.Now)
+                    if (item.Start >= startDate)
                     {
                         //MessageBox.Show(item.Subject + " -> " + item.Start.ToLongDateString());
                         //Console.WriteLine(item.Subject + " -> " + item.Start.ToLongDateString());
@@ -143,5 +190,12 @@ namespace DWRCalReport
         public DateTime endDate { get; set; }
         public int duration { get; set; }
         public bool isAllDay { get; set; }
+    }
+
+    public class DWRDetails
+    {
+        public string DWRProcess { get; set; }
+        public string Company { get; set; }
+        public string project { get; set; }
     }
 }

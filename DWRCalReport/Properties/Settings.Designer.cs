@@ -34,5 +34,17 @@ namespace DWRCalReport.Properties {
                 this["filePath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("09/01/2017")]
+        public string startDate {
+            get {
+                return ((string)(this["startDate"]));
+            }
+            set {
+                this["startDate"] = value;
+            }
+        }
     }
 }
