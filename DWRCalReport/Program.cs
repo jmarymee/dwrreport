@@ -35,6 +35,7 @@ namespace DWRCalReport
             Console.WriteLine(String.Format("{0}", item.endDate));
             Console.WriteLine(String.Format("{0}", item.duration));
             Console.WriteLine(String.Format("{0}", item.isAllDay));
+            Console.WriteLine(String.Format("{0}", item.DWRDays));
         }
 
         public void WriteAllItems(List<DWRItemClass> items)
@@ -57,7 +58,7 @@ namespace DWRCalReport
 
             using (var file = File.CreateText(filePath))
             {
-                file.WriteLine("StartDate,Subject,Categories,EndDate,Duration,AllDay");
+                file.WriteLine("StartDate,Subject,Categories,EndDate,Duration,AllDay,DWRDays");
                 foreach (var item in items)
                 {
                     //tst
@@ -75,7 +76,7 @@ namespace DWRCalReport
                     //        else return 1;
                     //    });
                     var cats = String.Join(",", catList.ToArray());
-                    file.WriteLine(string.Format("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\"", item.startDate, item.Subject, cats, item.endDate, item.duration, item.isAllDay));
+                    file.WriteLine(string.Format("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\"", item.startDate, item.Subject, cats, item.endDate, item.duration, item.isAllDay, item.DWRDays));
                 }
                 file.WriteLine();
             }
@@ -109,6 +110,17 @@ namespace DWRCalReport
             }
 
             return details;
+        }
+
+        private Decimal GetMinDWRDays(DateTime startDate, DateTime endDate)
+        {
+            if (startDate == null || endDate == null) { return 0.0M; }  //Defensive
+
+            TimeSpan total = endDate - startDate;
+            Decimal ts = total.Days;
+            if (Decimal.Compare(ts, 0.5M) < 0) { ts = 0.5M; }
+
+            return ts;
         }
 
         public void GetAllCalendarItems()
@@ -170,7 +182,7 @@ namespace DWRCalReport
                         //Console.WriteLine(item.Subject + " -> " + item.Start.ToLongDateString());
                         if (item.Categories != null && item.Categories.Trim().Contains("DWR:"))
                         {
-                            dwrItems.Add(new DWRItemClass() { Categories = item.Categories, duration = item.Duration, endDate = item.End, isAllDay = item.AllDayEvent, startDate = item.Start, Subject = item.Subject });
+                            dwrItems.Add(new DWRItemClass() { Categories = item.Categories, duration = item.Duration, endDate = item.End, isAllDay = item.AllDayEvent, startDate = item.Start, Subject = item.Subject, DWRDays = GetMinDWRDays(item.Start, item.End) });
                         }
                     }
                 }
@@ -190,6 +202,7 @@ namespace DWRCalReport
         public DateTime endDate { get; set; }
         public int duration { get; set; }
         public bool isAllDay { get; set; }
+        public Decimal DWRDays { get; set; }
     }
 
     public class DWRDetails
