@@ -37,13 +37,25 @@ namespace DWRCalReport.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("07/01/2017")]
+        [global::System.Configuration.DefaultSettingValueAttribute("2/1/2018")]
         public string startDate {
             get {
                 return ((string)(this["startDate"]));
             }
             set {
                 this["startDate"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1.0")]
+        public decimal mintime {
+            get {
+                return ((decimal)(this["mintime"]));
+            }
+            set {
+                this["mintime"] = value;
             }
         }
     }

@@ -6,7 +6,10 @@
       <Value Profile="(Default)">c:\tools\dwr.csv</Value>
     </Setting>
     <Setting Name="startDate" Type="System.String" Scope="User">
-      <Value Profile="(Default)">07/01/2017</Value>
+      <Value Profile="(Default)">2/1/2018</Value>
+    </Setting>
+    <Setting Name="mintime" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">1.0</Value>
     </Setting>
   </Settings>
 </SettingsFile>

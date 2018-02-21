@@ -58,11 +58,11 @@ namespace DWRCalReport
 
             using (var file = File.CreateText(filePath))
             {
-                file.WriteLine("StartDate,Subject,Categories,EndDate,Duration,AllDay,DWRDays");
+                file.WriteLine("Project,DWRActivity,Categories,Subject,StartDate,EndDate,DWRDays,AllDay,Duration");
                 foreach (var item in items)
                 {
-                    //tst
-                    ParseDetails(item);
+                    //Get Project info as well from raw object
+                    //DWRDetails details = ParseDetails(item);
                     var cList = item.Categories.Split(',');
                     catList = new List<string>(cList);
                     catList.RemoveAll(delegate (string s1) 
@@ -76,7 +76,8 @@ namespace DWRCalReport
                     //        else return 1;
                     //    });
                     var cats = String.Join(",", catList.ToArray());
-                    file.WriteLine(string.Format("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\"", item.startDate, item.Subject, cats, item.endDate, item.duration, item.isAllDay, item.DWRDays));
+                    file.WriteLine(string.Format("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\"", 
+                        item.Project, item.DWRActivity, cats, item.Subject, item.startDate, item.endDate, item.DWRDays, item.isAllDay, item.duration));
                 }
                 file.WriteLine();
             }
@@ -98,15 +99,22 @@ namespace DWRCalReport
                 return s1.Trim().StartsWith("Project:");
             });
 
-            if (projectInfo !=null && projectInfo.Count ==1 )
+            if (projectInfo != null && projectInfo.Count == 1)
             {
-                var pandc = projectInfo[0].Trim().Split('-');
-                if (pandc.Length == 2)
-                {
-                    details.DWRProcess = String.Join(",", catList.ToArray());
-                    details.Company = pandc[1];
-                    details.project = pandc[0];
-                }
+                details.project = projectInfo[0].Trim();
+                details.DWRProcess = String.Join(",", catList.ToArray());
+                //var pandc = projectInfo[0].Trim().Split('-');
+                //if (pandc.Length == 2)
+                //{
+                //    details.DWRProcess = String.Join(",", catList.ToArray());
+                //    details.Company = pandc[0];
+                //    details.project = pandc[1];
+                //}
+            }
+            else
+            {
+                details.DWRProcess = String.Join(",", catList.ToArray());
+                details.project = "Unspecified";
             }
 
             return details;
@@ -116,9 +124,11 @@ namespace DWRCalReport
         {
             if (startDate == null || endDate == null) { return 0.0M; }  //Defensive
 
+            Decimal _mMinTime = Properties.Settings.Default.mintime;
+
             TimeSpan total = endDate - startDate;
             Decimal ts = total.Days;
-            if (Decimal.Compare(ts, 0.5M) < 0) { ts = 0.5M; }
+            if (Decimal.Compare(ts, _mMinTime) < 0) { ts = _mMinTime; }
 
             return ts;
         }
@@ -182,7 +192,9 @@ namespace DWRCalReport
                         //Console.WriteLine(item.Subject + " -> " + item.Start.ToLongDateString());
                         if (item.Categories != null && item.Categories.Trim().Contains("DWR:"))
                         {
-                            dwrItems.Add(new DWRItemClass() { Categories = item.Categories, duration = item.Duration, endDate = item.End, isAllDay = item.AllDayEvent, startDate = item.Start, Subject = item.Subject, DWRDays = GetMinDWRDays(item.Start, item.End) });
+                            //dwrItems.Add(new DWRItemClass() { Categories = item.Categories, duration = item.Duration, endDate = item.End, isAllDay = item.AllDayEvent, startDate = item.Start,
+                            //Subject = item.Subject, DWRDays = GetMinDWRDays(item.Start, item.End) });
+                            dwrItems.Add(ParseItemToObject(item));
                         }
                     }
                 }
@@ -192,11 +204,31 @@ namespace DWRCalReport
             WriteAllItems(dwrItems);
             WriteToCSV(dwrItems, filePath);
         }
+
+        private DWRItemClass ParseItemToObject(Microsoft.Office.Interop.Outlook.AppointmentItem item)
+        {
+            DWRItemClass di = new DWRItemClass();
+            di.Categories = item.Categories;
+            di.duration = item.Duration;
+            di.endDate = item.End;
+            di.isAllDay = item.AllDayEvent;
+            di.startDate = item.Start;
+            di.Subject = item.Subject;
+            di.DWRDays = GetMinDWRDays(item.Start, item.End);
+
+            DWRDetails details = ParseDetails(di);
+            di.Project = details.project;
+            di.DWRActivity = details.DWRProcess;
+
+            return di;
+        }
     }
 
     public class DWRItemClass
     {
         public string Categories { get; set; }
+        public string Project { get; set; }
+        public string DWRActivity { get; set; }
         public string Subject { get; set; }
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
