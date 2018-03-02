@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="filePath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">c:\tools\dwr.csv</Value>
+      <Value Profile="(Default)">c:\tools\</Value>
     </Setting>
     <Setting Name="startDate" Type="System.String" Scope="User">
       <Value Profile="(Default)">2/1/2018</Value>

@@ -22,6 +22,18 @@ namespace DWRCalReport
             {
                 p.filePath = Properties.Settings.Default.filePath;
             }
+
+            string[] dateInfo = (Properties.Settings.Default.startDate).Split('/');
+            int year = Convert.ToInt32(dateInfo[2]);
+            int month = Convert.ToInt32(dateInfo[0]);
+            int day = Convert.ToInt32(dateInfo[1]);
+            DateTime startDate = new DateTime(year, month, day);
+            DateTime now = DateTime.Now;
+
+            string fileName = startDate.ToString("yyyyMMdd") + '-' + now.ToString("yyyyMMdd");
+
+            p.filePath = p.filePath + "/" + fileName + ".csv";
+
             p.GetAllCalendarItems();
             Console.WriteLine("done");
             Console.ReadLine();
